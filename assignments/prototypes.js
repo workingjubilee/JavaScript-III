@@ -50,7 +50,7 @@ function CharacterStats(stuff){
 }
 
 CharacterStats.prototype = Object.create(GameObject.prototype);
-
+// I can't help but feel I'm doing something wrong with ordering things but whatever.
 CharacterStats.prototype.takeDamage = function() {
     return this.name + ' took damage.'
 }
@@ -75,7 +75,7 @@ function Humanoid(stuff) {
 
 Humanoid.prototype = Object.create(CharacterStats.prototype);
 
-Humanoid.prototype.greet = function () {
+Humanoid.prototype.greet = function() {
   return `${this.name} offers a greeting in ${this.language}.`
 }
 
@@ -163,3 +163,89 @@ Humanoid.prototype.greet = function () {
   // * Create Villain and Hero constructor functions that inherit from the Humanoid constructor function.
   // * Give the Hero and Villains different methods that could be used to remove health points from objects which could result in destruction if health gets to 0 or drops below 0;
   // * Create two new objects, one a villain and one a hero and fight it out with methods!
+
+function Fightable(stuff){
+  Humanoid.call(this,stuff);
+}
+
+Fightable.prototype = Object.create(Humanoid.prototype);
+
+Fightable.prototype.takeRealDamage = function(damage) {
+  this.healthPoints -= damage;
+  if (this.healthPoints < 0) {
+    console.log(`${this.name} takes fatal damage!`);
+    console.log(this.destroy());
+  } else {
+    console.log(`${this.takeDamage()} ${this.healthPoints} health points remaining.`);
+  }
+}
+
+function Hero(stuff){
+  Fightable.call(this,stuff);
+}
+
+Hero.prototype = Object.create(Fightable.prototype);
+Hero.prototype.stab = function(target) {
+  if (this.weapons.includes('Dagger')) {
+    let damage = 1;
+    console.log(`${this.name} stabs ${target.name}!`)
+    target.takeRealDamage(damage);
+  } else {
+    console.log('Error!');
+  }
+}
+
+function Villain(stuff){
+  Fightable.call(this,stuff);
+}
+
+Villain.prototype = Object.create(Fightable.prototype);
+Villain.prototype.stomp = function(target) {
+  if (target.dimensions.height === undefined) {
+    console.log('Error!');
+  } else if (this.dimensions.height > target.dimensions.height) {
+    console.log(`${this.name} stomps on ${target.name}!`);
+    let damage = this.dimensions.height - target.dimensions.height;
+      target.takeRealDamage(damage);
+  } else if (this.dimensions.height < target.dimensions.height) {
+    console.log(this.name + ' tries to stomp and misses!');
+  }
+}
+
+const ogre = new Villain({
+  createdAt: new Date(),
+  dimensions: {
+    length: 2,
+    width: 2,
+    height: 9,
+  },
+  healthPoints: 20,
+  name: 'Rek',
+  team: 'Bad Guys',
+  weapons: [
+    'Giant Club',
+  ],
+  language: 'Black Speech',
+});
+
+const halfling = new Hero({
+    createdAt: new Date(),
+    dimensions: {
+      length: 1,
+      width: 1,
+      height: 1,
+    },
+    healthPoints: 5,
+    name: 'Smalls',
+    team: 'Good Guys',
+    weapons: [
+      'Dagger',
+    ],
+    language: 'Common',
+  });
+
+// debug testing to determine that I needed to refer to object.dimensions.height;
+// console.log(halfling.height);
+// console.log(halfling.dimensions.height);
+halfling.stab(ogre);
+ogre.stomp(halfling);
