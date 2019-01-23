@@ -166,9 +166,14 @@ Humanoid.prototype.greet = function() {
 
 function Fightable(stuff){
   Humanoid.call(this,stuff);
+  this.epithet = stuff.epithet;
 }
 
 Fightable.prototype = Object.create(Humanoid.prototype);
+
+Fightable.prototype.arrive = function() {
+  console.log(`${this.name} ${this.epithet} strides into the arena!`)
+}
 
 Fightable.prototype.takeRealDamage = function(damage) {
   this.healthPoints -= damage;
@@ -221,7 +226,8 @@ const ogre = new Villain({
   },
   healthPoints: 20,
   name: 'Rek',
-  team: 'Bad Guys',
+  epithet: 'the Ogre',
+  team: 'Bad Guy',
   weapons: [
     'Giant Club',
   ],
@@ -237,15 +243,18 @@ const halfling = new Hero({
     },
     healthPoints: 5,
     name: 'Smalls',
-    team: 'Good Guys',
+    epithet: 'the Halfling',
+    team: 'Good Guy',
     weapons: [
       'Dagger',
     ],
     language: 'Common',
   });
 
-// debug testing to determine that I needed to refer to object.dimensions.height;
+// debug testing to determine that I needed to refer to object.dimensions.height to make Stomp work;
 // console.log(halfling.height);
 // console.log(halfling.dimensions.height);
+ogre.arrive();
+halfling.arrive();
 halfling.stab(ogre);
 ogre.stomp(halfling);
