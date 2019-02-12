@@ -27,7 +27,7 @@ const megaMan = {
   }
 
 megaMan.chargeup();
-  // Result: the "this" refers to
+  // Result: the "this" refers to the object on which it is placed.
 
 
 // Principle 3
@@ -56,3 +56,13 @@ cutMan.die.apply(megaMan);
 cutMan.die.call(megaMan);
 megaMan.chargeup.apply(cutMan);
 megaMan.chargeup.call(cutMan);
+
+// node output:
+// {}
+// Rock begins charging the Mega Buster!
+// Cut Man drops out of the ceiling!
+// You got Rolling Cut!
+// You got Mega Buster!
+// You got Mega Buster!
+// Cut Man begins charging the Rolling Cut!
+// Cut Man begins charging the Rolling Cut!

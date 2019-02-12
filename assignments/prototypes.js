@@ -85,7 +85,7 @@ Humanoid.prototype.greet = function() {
   * Instances of CharacterStats should have all of the same properties as GameObject.
 */
 
-// Test you work by un-commenting these 3 objects and the list of console logs below:
+// Test your work by un-commenting these 3 objects and the list of console logs below:
 
 // /*
   const explodingbarrel = new GameObject({
@@ -157,7 +157,7 @@ Humanoid.prototype.greet = function() {
   console.log(mage.takeDamage()); // Bruce took damage.
   console.log(swordsman.destroy()); // Sir Mustachio was removed from the game.
   console.log(explodingbarrel.destroy());
-// */
+*/
 
   // Stretch task:
   // * Create Villain and Hero constructor functions that inherit from the Humanoid constructor function.
@@ -176,6 +176,9 @@ Fightable.prototype.arrive = function() {
 }
 
 Fightable.prototype.takeRealDamage = function(damage) {
+  // This function is actually invoked _BY THE FIGHTABLE BEING HIT_.
+  // You have to specify some amount of damage, then it subtracts
+
   this.healthPoints -= damage;
   if (this.healthPoints < 0) {
     console.log(`${this.name} takes fatal damage!`);
@@ -190,6 +193,7 @@ function Hero(stuff){
 }
 
 Hero.prototype = Object.create(Fightable.prototype);
+
 Hero.prototype.stab = function(target) {
   if (this.weapons.includes('Dagger')) {
     let damage = 1;
@@ -206,14 +210,16 @@ function Villain(stuff){
 
 Villain.prototype = Object.create(Fightable.prototype);
 Villain.prototype.stomp = function(target) {
+  // needs to specify the target ^
   if (target.dimensions.height === undefined) {
+    // had initially written with target.height
     console.log('Error!');
   } else if (this.dimensions.height > target.dimensions.height) {
     console.log(`${this.name} stomps on ${target.name}!`);
     let damage = this.dimensions.height - target.dimensions.height;
       target.takeRealDamage(damage);
   } else if (this.dimensions.height < target.dimensions.height) {
-    console.log(this.name + ' tries to stomp and misses!');
+    console.log(`${this.name} tries to stomp on ${target.name} but can't get a leg up!`);
   }
 }
 
@@ -251,6 +257,24 @@ const halfling = new Hero({
     language: 'Common',
   });
 
+const herodragon = new Hero({
+    createdAt: new Date(),
+    dimensions: {
+      length: 20,
+      width: 10,
+      height: 20,
+    },
+    healthPoints: 30,
+    name: 'Auros',
+    epithet: 'the Golden Dragon',
+    team: 'Good Guy',
+    weapons: [
+      'Fangs',
+      'Claws'
+    ],
+    language: 'Dragon',
+  });
+
 // debug testing to determine that I needed to refer to object.dimensions.height to make Stomp work;
 // console.log(halfling.height);
 // console.log(halfling.dimensions.height);
@@ -258,3 +282,16 @@ ogre.arrive();
 halfling.arrive();
 halfling.stab(ogre);
 ogre.stomp(halfling);
+herodragon.arrive();
+ogre.stomp(herodragon);
+
+// current output from node prototypes.js
+// Rek the Ogre strides into the arena!
+// Smalls the Halfling strides into the arena!
+// Smalls stabs Rek!
+// Rek took damage. 19 health points remaining.
+// Rek stomps on Smalls!
+// Smalls takes fatal damage!
+// Smalls was removed from the game.
+// Auros the Golden Dragon strides into the arena!
+// Rek tries to stomp on Auros but can't get a leg up!
